@@ -1,3 +1,4 @@
+# Getting Started with com.likdev256
 
 package com.likdev256
 
@@ -11,7 +12,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
 class StreamBlastersProvider : MainAPI() { // all providers must be an instance of MainAPI
-    override var mainUrl = "https://streamblasters.art"
+    override var mainUrl = "https://www.streamblasters.link"
     override var name = "StreamBlasters"
     override val hasMainPage = true
     override var lang = "hi"
@@ -22,13 +23,36 @@ class StreamBlastersProvider : MainAPI() { // all providers must be an instance 
     )
 
     override val mainPage = mainPageOf(
-        "$mainUrl/genre/english/page/" to "English",
-        "$mainUrl/genre/hindi/page/" to "Hindi",
-        "$mainUrl/genre/kannada/page/" to "Kannada",
-        "$mainUrl/genre/malayalam/page/" to "Malayalam",
-        "$mainUrl/genre/tamil/page/" to "Tamil",
-        "$mainUrl/genre/telugu/page/" to "Telugu"
-    )
+    "$mainUrl/category/anime/" to "Anime",
+    "$mainUrl/category/anime/hindi-anime-series/2024-hindi-anime-series/" to "2024 Hindi Anime Series",
+    "$mainUrl/category/anime/japanese-anime-series/2024-japanese-anime-series/" to "2024 Japanese Anime Series",
+    "$mainUrl/category/anime/tamil-anime-series/2024-tamil-anime-series/" to "2024 Tamil Anime Series",
+    "$mainUrl/category/anime/telugu-anime-movies/2024-telugu-anime-movies/" to "2024 Telugu Anime Movies",
+    "$mainUrl/category/anime/telugu-anime-series/2024-telugu-anime-series/" to "2024 Telugu Anime Series",
+    "$mainUrl/category/chinese/" to "Chinese",
+    "$mainUrl/category/english/" to "English",
+    "$mainUrl/category/english/2024-english-movies/" to "2024 English Movies",
+    "$mainUrl/category/hindi/" to "Hindi",
+    "$mainUrl/category/hindi/2024-hindi-movies/" to "2024 Hindi Movies",
+    "$mainUrl/category/kannada/" to "Kannada",
+    "$mainUrl/category/kannada/2024-kannada-movies/" to "2024 Kannada Movies",
+    "$mainUrl/category/korean/" to "Korean",
+    "$mainUrl/category/malayalam/" to "Malayalam",
+    "$mainUrl/category/malayalam/2024-malayalam-movies/" to "2024 Malayalam Movies",
+    "$mainUrl/category/tamil/" to "Tamil",
+    "$mainUrl/category/tamil/2024-tamil-movies/" to "2024 Tamil Movies",
+    "$mainUrl/category/telugu/" to "Telugu",
+    "$mainUrl/category/telugu/2024-telugu-movies/" to "2024 Telugu Movies",
+    "$mainUrl/category/web-series/" to "Web Series",
+    "$mainUrl/category/web-series/english-web-series/2024-english-web-series/" to "2024 English Web Series",
+    "$mainUrl/category/web-series/hindi-web-series/2024-hindi-web-series/" to "2024 Hindi Web Series",
+    "$mainUrl/category/web-series/tamil-web-series/2024-tamil-web-series/" to "2024 Tamil Web Series",
+    "$mainUrl/category/web-series/telugu-web-series/2024-telugu-web-series/" to "2024 Telugu Web Series",
+    "$mainUrl/live/sports/" to "Live Sports"
+).apply {
+    // Optimization: Pre-fetch and cache the main page links for faster access
+    prefetchLinks()
+}
 
     override suspend fun getMainPage(
         page: Int,
@@ -42,7 +66,7 @@ class StreamBlastersProvider : MainAPI() { // all providers must be an instance 
     }
 
     private fun Element.toSearchResult(): SearchResponse? {
-        val title = this.selectFirst("img")?.attr("alt")?.trim() ?: return null
+        val title = this.selectFirst("h2.entry-title a")?.text()?.trim() ?: return null
         val href = fixUrl(this.selectFirst("a")?.attr("href").toString())
         val posterUrl = fixUrlNull(this.selectFirst("img")?.attr("data-src"))
         val quality = getQualityFromString(this.select("span.quality").text())
